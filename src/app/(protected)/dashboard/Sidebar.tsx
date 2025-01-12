@@ -28,6 +28,7 @@ import { cn } from "@/lib/utils"
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import useProject from "@/hooks/use-project";
+import SyncUser from "@/app/sync-user/page";
 
 
 const items = [
@@ -62,6 +63,7 @@ const AppSidebar = () => {
   const router = useRouter();
   const pathname = usePathname();
   const { open } = useSidebar();
+  
   const { projects, projectId, setProjectId } = useProject()
   return (
     <>

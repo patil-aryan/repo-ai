@@ -1,6 +1,8 @@
 import { createTRPCClient } from "@trpc/client";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { z } from "zod";
+import { db } from "@/server/db";
+import { pollCommits } from "@/lib/github";
 
 export const projectRouter = createTRPCRouter({
   createProject: protectedProcedure
@@ -27,6 +29,7 @@ export const projectRouter = createTRPCRouter({
           },
         },
       });
+      await pollCommits(project.id);
       return project;
     }),
     getProjects: protectedProcedure.query(async ({ ctx }) => {
@@ -40,10 +43,19 @@ export const projectRouter = createTRPCRouter({
           deletedAt: null
         },
       });
-      return projects;
     }),
-});
 
+    getCommits: protectedProcedure.input(z.object({
+        projectId: z.string(),
+    })).query(async ({ ctx, input }) => {
+        return await ctx.db.commit.findMany({
+            where: {
+                projectId: input.projectId
+            }
+        })
+    }
+    
+)});
 
 // export const projectRouter = createTRPCRouter({
 //     createProject: protectedProcedure
@@ -55,31 +67,34 @@ export const projectRouter = createTRPCRouter({
 //         }),
 //       )
 //       .mutation(async ({ ctx, input }) => {
-//         // Debug authentication
-//         console.log("Auth Context:", {
-//           userId: ctx.user.userId,
-//           auth: ctx.user
+//         const userId = ctx.user.userId!;
+  
+//         // Check if the user exists
+//         const userExists = await ctx.db.user.findUnique({
+//           where: { id: userId },
+        
+//         });
+//         console.log('userId:', userId);
+  
+//         if (!userExists) {
+//           throw new Error('User does not exist in the database');
+//         }
+  
+//         const project = await ctx.db.project.create({
+//           data: {
+//             name: input.name,
+//             githubUrl: input.githubUrl,
+//             userToProjects: {
+//               create: {
+//                 userId: userId,
+//               },
+//             },
+//           },
 //         });
   
-//         try {
-//           return await ctx.db.$transaction(async (tx) => {
-//             const project = await tx.project.create({
-//               data: {
-//                 name: input.name,
-//                 githubUrl: input.githubUrl,
-//                 userToProjects: {
-//                   create: {
-//                     userId: ctx.user.userId!,
-//                   }
-//                 }
-//               }
-//             });
-//             return project;
-//           });
-//         } catch (error) {
-//           console.error("Transaction error:", error);
-//           throw error;
-//         }
+//         await pollCommits(project.id);
+//         return project;
 //       }),
 //   });
-  
+
+
