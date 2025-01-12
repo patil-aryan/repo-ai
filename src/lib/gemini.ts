@@ -1,8 +1,10 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import 'dotenv/config';
+import { Document } from '@langchain/core/documents'
+import { toast } from 'sonner';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-// const genAI = new GoogleGenerativeAI("AIzaSyApyTmLPuqNxsHw3j0vsmN6UrcQqebi8Bs");
+
 
 const model = genAI.getGenerativeModel(
     {
@@ -48,4 +50,41 @@ It is given only as an example of appropriate comments.`,
 
 }
 
-console.log( await aiSummarizeCommit(`https://github.com/patil-aryan/fullstack-linkedin/commit/705d9629e07ad5f178e6850160a52d5406e64fa8.diff`))
+// console.log( await aiSummarizeCommit(`https://github.com/patil-aryan/fullstack-linkedin/commit/705d9629e07ad5f178e6850160a52d5406e64fa8.diff`))
+
+export async function summariseCode(doc: Document) {
+    console.log("Getting summary for the files", doc.metadata.source)
+    try {
+        const code = doc.pageContent.slice(0,10000)
+    const response = await model.generateContent([
+        `You are an expert and intelligent senior principal software engineer and programmer, 
+        who is an expert in explaining any code to junior software engineers who are onboarding. You are 
+        onboarding a junior software engineer and explaining them the purpose of the ${doc.metadata.source} file.
+
+        Here is the code:
+        ---
+         ${code}
+        ---
+        
+    Give a detailed and expert summary of the code in 200 words or less.`    
+    ])
+
+    return response.response.text();
+    } catch (error) {
+        toast.error("Error summarising code")
+    }
+    
+
+}
+
+
+export async function generateEmbedding(summary: string) {
+    const model = genAI.getGenerativeModel({
+        model: 'text-embedding-004'
+    })
+    const response = await model.embedContent([
+        summary
+    ])
+
+    const embedding = response.embedding
+}

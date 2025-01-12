@@ -88,7 +88,7 @@ export const pollCommits = async (projectId: string) => {
 
 async function summarizeCommits(githubUrl: string, commitHash: string) {
 
-    const {data} = await axios.get(`${githubUrl}/commits/${commitHash}.diff` , {
+    const {data} = await axios.get(`${githubUrl}/commit/${commitHash}.diff` , {
         headers: {
             Accept: 'application/vnd.github.v3.diff'
         }
