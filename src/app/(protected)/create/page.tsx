@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import useRefetch from '@/hooks/use-refetch'
 import { api } from '@/trpc/react'
 import React, { use } from 'react'
 import { useForm } from 'react-hook-form'
@@ -16,9 +17,9 @@ type FormInput = {
 const CreatePage = () => {
     const {register, handleSubmit, reset} = useForm<FormInput>()
     const createProject = api.project.createProject.useMutation()
+    const refetch = useRefetch()
 
     function onSubmit(data: FormInput) {
-       window.alert(JSON.stringify(data))
        createProject.mutate({
               name: data.projectName,
               githubUrl: data.repoUrl,
@@ -26,6 +27,7 @@ const CreatePage = () => {
        }, {
             onSuccess: () => {
                 toast.success('Project created successfully')
+                refetch()
                 reset()
             },
 
@@ -46,7 +48,7 @@ const CreatePage = () => {
     </div>
     <div className='flex items-center justify-center gap-2 py-24'> {/* h-full */}
         {/* <img className='h-72 w-auto' src="/images/github-overview.webp" alt="github" /> */}
-        <img className='h-72 w-auto' src="/images/github-overview.webp" alt="github" />
+        <img className='h-72 w-auto mt-12' src="https://raw.githubusercontent.com/patil-aryan/repo-ai/refs/heads/main/public/images/github-overview.webp" alt="github" />
         
         {/* <img className='h-56 w-auto' src="https://www.reshot.com/preview-assets/icons/NY46M9DGFU/github-NY46M9DGFU.svg" alt="github" /> */}
         <div className='pr-20'>
@@ -68,7 +70,7 @@ const CreatePage = () => {
                     <div className='py-2'></div>
                     <Input {...register('githubToken', {required: false})} placeholder='Github Access Token (Optional)' />
                     <div className='py-2'></div>
-                    <Button type='submit' className='w-full'>
+                    <Button type='submit' disabled={createProject.isPending} className='w-full'>
                         Create Project
                     </Button>
                 </form>

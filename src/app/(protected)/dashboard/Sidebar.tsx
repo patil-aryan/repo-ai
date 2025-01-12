@@ -24,9 +24,11 @@ import {
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-
-import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils"
+import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
+import useProject from "@/hooks/use-project";
+
 
 const items = [
   {
@@ -54,27 +56,13 @@ const items = [
   },
 ];
 
-const projects = [
-  {
-    title: "Project 1",
-    url: "/projects/1",
-  },
-
-  {
-    title: "Project 2",
-    url: "/projects/2",
-  },
-
-  {
-    title: "Project 3",
-    url: "/projects/3",
-  },
-];
 
 const AppSidebar = () => {
   // const { pathname } = useRouter()
+  const router = useRouter();
   const pathname = usePathname();
   const { open } = useSidebar();
+  const { projects, projectId, setProjectId } = useProject()
   return (
     <>
       <Sidebar collapsible="icon" variant="floating">
@@ -129,25 +117,47 @@ const AppSidebar = () => {
             <SidebarGroupLabel>Your Projects</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {projects.map((project) => (
-                  <SidebarMenuItem key={project.title}>
+                {/* <div>
+                {projects?.map((project) => (
+                  <SidebarMenuItem key={project.name}>
                     <SidebarMenuButton asChild>
                       <div>
                         <div className="flex size-6 items-center justify-center rounded-sm border">
-                          {" "}
-                          {project.title[0]}
+                          {project.name[0]}
                         </div>
-                        <span>{project.title}</span>
+                        <span>{project.name}</span>
                         {/* <div className={cn('rounded-sm border size-6 flex items-center justify-center text-sm bg-white text-primary '), {
                                 'bg-primary text-white': true
                             }}>
                             
                           
                         </div> */}
-                      </div>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
+                      {/* </div> */}
+                    {/* </SidebarMenuButton> */}
+                  {/* </SidebarMenuItem> */}
+                {/* ))} */}
+                {/* </div> */} 
+                {projects?.map((project) => (
+                                <SidebarMenuItem key={project.id}>
+                                    <SidebarMenuButton asChild>
+                                        <div onClick={() => {
+                                            setProjectId(project.id)
+                                            router.push(`/dashboard`)
+                                        }} className={cn({
+                                            'cursor-pointer': true,
+                                        })}>
+                                            <div className="">
+                                                <div className={cn("rounded-sm border size-6 flex items-center justify-center text-sm bg-white text-primary", {
+                                                    'bg-primary text-white': projectId === project.id,
+                                                })}>
+                                                    {project.name[0]}
+                                                </div>
+                                            </div>
+                                            <span>{project.name}</span>
+                                        </div>
+                                    </SidebarMenuButton>
+                                </SidebarMenuItem>
+                            ))}
 
                 <div className="h-2"></div>
 

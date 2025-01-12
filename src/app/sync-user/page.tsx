@@ -13,7 +13,7 @@ const SyncUser = async () => {
     const client = await clerkClient()
     const user = await client.users.getUser(userId)
     if (!user.emailAddresses[0]?.emailAddress) {
-      return notFound
+      return notFound()
     }
 
     await db.user.upsert({
