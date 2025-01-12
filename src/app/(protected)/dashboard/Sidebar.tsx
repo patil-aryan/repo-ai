@@ -11,15 +11,22 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 
-import { Bot, CreditCard, LayoutDashboard, Plus, Presentation } from "lucide-react";
+import {
+  Bot,
+  CreditCard,
+  LayoutDashboard,
+  Plus,
+  Presentation,
+} from "lucide-react";
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 import { usePathname } from "next/navigation";
-
+import Image from "next/image";
 
 const items = [
   {
@@ -64,16 +71,30 @@ const projects = [
   },
 ];
 
-
-
 const AppSidebar = () => {
-
-// const { pathname } = useRouter()
-    const pathname = usePathname(); 
+  // const { pathname } = useRouter()
+  const pathname = usePathname();
+  const { open } = useSidebar();
   return (
     <>
       <Sidebar collapsible="icon" variant="floating">
-        <SidebarHeader>Repo AI</SidebarHeader>
+        <SidebarHeader>
+          <Link href="/dashboard">
+            <div className="flex items-center gap-4">
+              <Image
+                src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWNvbWJpbmUiPjxwYXRoIGQ9Ik0xMCAxOEg1YTMgMyAwIDAgMS0zLTN2LTEiLz48cGF0aCBkPSJNMTQgMmEyIDIgMCAwIDEgMiAydjRhMiAyIDAgMCAxLTIgMiIvPjxwYXRoIGQ9Ik0yMCAyYTIgMiAwIDAgMSAyIDJ2NGEyIDIgMCAwIDEtMiAyIi8+PHBhdGggZD0ibTcgMjEgMy0zLTMtMyIvPjxyZWN0IHg9IjE0IiB5PSIxNCIgd2lkdGg9IjgiIGhlaWdodD0iOCIgcng9IjIiLz48cmVjdCB4PSIyIiB5PSIyIiB3aWR0aD0iOCIgaGVpZ2h0PSI4IiByeD0iMiIvPjwvc3ZnPg=="
+                alt="logo"
+                width={40}
+                height={40}
+              />
+              {open && (
+                <h1 className="cursor-pointer px-3 text-[1.5rem] font-bold text-primary">
+                  Repo AI
+                </h1>
+              )}
+            </div>
+          </Link>
+        </SidebarHeader>
         <SidebarContent>
           <SidebarGroup>
             <SidebarGroupLabel>Application</SidebarGroupLabel>
@@ -87,14 +108,13 @@ const AppSidebar = () => {
                         className="{cn({'!bg-primary !text-white' : pathname === item.url}, 'list-none')}"
                       > */}
                       <Link
-                      href={item.url}
-                      className={`flex items-center gap-2 rounded-md px-3 py-2 ${
-                        pathname === item.url
-                          ? "bg-black text-white" // Active tab styling
-                          : "hover:bg-gray-200 text-gray-800" // Default styling
-                      }`}
-                    >
-                        
+                        href={item.url}
+                        className={`flex items-center gap-2 rounded-md px-3 py-2 ${
+                          pathname === item.url
+                            ? "bg-black text-white" // Active tab styling
+                            : "text-gray-800 hover:bg-gray-200" // Default styling
+                        }`}
+                      >
                         <item.icon />
                         <span>{item.title}</span>
                       </Link>
@@ -131,15 +151,16 @@ const AppSidebar = () => {
 
                 <div className="h-2"></div>
 
-                <SidebarMenuItem>
+                {open && (
+                  <SidebarMenuItem>
                     <Link href="/create">
-                  <Button size={"sm"} variant={"outline"} className="w-fit">
-                    <Plus />
-                    Create Project
-    
-                  </Button>
-                  </Link>
-                </SidebarMenuItem>
+                      <Button size={"sm"} variant={"outline"} className="w-fit">
+                        <Plus />
+                        Create Project
+                      </Button>
+                    </Link>
+                  </SidebarMenuItem>
+                )}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>

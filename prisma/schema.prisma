@@ -19,4 +19,29 @@ model User {
     credits       Int    @default(200)
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+    userToProjects UsertoProject[]
+}
+
+model Project {
+    id          String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    name       String
+    githubUrl  String
+    deletedAt  DateTime?
+
+    userToProjects UsertoProject[]
+
+}
+
+model UsertoProject {
+    id         String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    userId     String
+    projectId  String
+    User       User     @relation(fields: [userId], references: [id])
+    Project    Project  @relation(fields: [projectId], references: [id])
+
+    @@unique([userId, projectId])
 }
