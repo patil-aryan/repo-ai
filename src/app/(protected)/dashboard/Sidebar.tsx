@@ -79,7 +79,7 @@ const AppSidebar = () => {
               />
               {open && (
                 <h1 className="cursor-pointer px-3 text-[1.5rem] font-bold text-primary">
-                  Repo AI
+                  RepoAI
                 </h1>
               )}
             </div>

@@ -8,19 +8,21 @@ type Props = {
 };
 
 const SideBarLayout = ({ children }: Props) => {
-
   return (
     <SidebarProvider>
       <AppSidebar />
       <main className="m-2 w-full">
         <div className="flex items-center gap-2 rounded-md border border-sidebar-border bg-sidebar p-2 px-4 shadow">
           {/* <SearchBar/> */}
+          <div className="">RepoAI: AI-Driven Insights for Better Code Collaboration.</div>
+          
+
           <div className="ml-auto"></div>
           <UserButton />
         </div>
         <div className="h-4"></div>
-        <div className="border-sidebar-border bg-sidebar border shadow rounded-md overflow-y-scroll p-4 h-[calc(100vh-6rem)]">
-            {children}
+        <div className="h-[calc(100vh-6rem)] overflow-y-scroll rounded-md border border-sidebar-border bg-sidebar p-4 shadow">
+          {children}
         </div>
       </main>
     </SidebarProvider>

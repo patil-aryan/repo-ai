@@ -87,8 +87,11 @@ import { toast } from 'sonner';
 import { api } from '@/trpc/react';
 import useProject from '@/hooks/use-project';
 import { useRouter } from 'next/navigation';
+import { useMutation } from '@tanstack/react-query';
+import axios from 'axios';
 // import { uploadFile } from '@/lib/firebase';
 dotenv.config();
+
 
 // Initialize Supabase client
 // const supabaseUrl = ''; // Replace with your Supabase project URL
@@ -146,6 +149,16 @@ const MeetingCard = () => {
   const uploadMeeting = api.project.uploadMeeting.useMutation();
   const { project } = useProject();
   const router = useRouter();
+  const processMeeting = useMutation({
+    mutationFn: async ( data : {meetingUrl: string, meetingId: string, projectId: string}) => {
+      const { meetingUrl, meetingId, projectId } = data;
+      const response = await axios.post('/api/process-meeting', {
+        meetingUrl, meetingId, projectId
+      });
+      return response.data;
+    }
+
+  })
 
   const { getRootProps, getInputProps } = useDropzone({
     accept: {
@@ -165,9 +178,10 @@ const MeetingCard = () => {
           projectId: project.id, 
           meetingUrl: downloadURL,
           name: file.name },{
-          onSuccess: () => {
+          onSuccess: (meeting) => {
             toast.success('Meeting uploaded successfully');
-            router.push('/dashboard');
+            router.push('/meetings');
+            processMeeting.mutateAsync({ meetingUrl: downloadURL, meetingId: meeting.id, projectId: project.id });
           },
           onError: (error) => {
             toast.error('Failed to upload meeting');
