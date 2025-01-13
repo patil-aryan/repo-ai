@@ -71,7 +71,7 @@ export async function summariseCode(doc: Document) {
 
     return response.response.text();
     } catch (error) {
-        toast.error("Error summarising code")
+        console.error(error)
     }
     
 
