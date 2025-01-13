@@ -78,13 +78,41 @@ export async function summariseCode(doc: Document) {
 }
 
 
-export async function generateEmbedding(summary: string) {
+// export async function generateEmbedding(summary: string): Promise<number[]> {
+//     const model = genAI.getGenerativeModel({
+//         model: 'text-embedding-004'
+//     })
+//     const response = await model.embedContent([
+//         summary
+//     ])
+
+//     const embedding = response.embedding
+//     return embedding
+// }
+export async function generateEmbedding(summary: string): Promise<number[]> {
     const model = genAI.getGenerativeModel({
         model: 'text-embedding-004'
-    })
-    const response = await model.embedContent([
-        summary
-    ])
+    });
 
-    const embedding = response.embedding
+    const response = await model.embedContent([summary]);
+
+    // Ensure the response contains the embedding
+    if (!response.embedding) {
+        throw new Error('Failed to generate embedding: No embedding found in response');
+    }
+
+    // Convert the embedding to a number array if necessary
+    const embedding = response.embedding as unknown as number[];
+
+    // Return the embedding array
+    return embedding;
+}
+
+export const getEmbeddings = async (text: string) => {
+    // For embeddings, use the Text Embeddings model
+    const model = genAI.getGenerativeModel({ model: "text-embedding-004" });
+
+    const result = await model.embedContent(text);
+    const embedding = result.embedding;
+    return embedding.values as number[];
 }
