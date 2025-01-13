@@ -4,6 +4,7 @@ import { z } from "zod";
 import { db } from "@/server/db";
 import { pollCommits } from "@/lib/github";
 import { indexGithubRepo } from "@/lib/github-loader";
+import { issue } from "@uiw/react-md-editor";
 
 export const projectRouter = createTRPCRouter({
   createProject: protectedProcedure
@@ -93,17 +94,47 @@ export const projectRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       return await ctx.db.question.findMany({
         where: {
-            projectId: input.projectId,
-          
+          projectId: input.projectId,
         },
         // include: {
         //     userId: ctx.user.userId!,
         // },
         orderBy: {
-            createdAt: 'desc',
-        }
+          createdAt: "desc",
+        },
       });
     }),
+
+  uploadMeeting: protectedProcedure
+    .input(
+      z.object({
+        projectId: z.string(),
+        meetingUrl: z.string(),
+        name: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const sanitizedName = input.name.trim();
+      const meeting = await ctx.db.meeting.create({
+        data: {
+          meetingUrl: input.meetingUrl,
+          name: sanitizedName,
+          projectId: input.projectId,
+          status: "PROCESSING",
+        },
+      });
+    }),
+
+  getMeetings: protectedProcedure.input(z.object({ projectId: z.string() })).query(async ({ ctx, input }) => {
+    return await ctx.db.meeting.findMany({
+      where: {
+        projectId: input.projectId,
+      },
+      include: {
+        issues: true,
+      }
+    });
+  }),
 });
 
 // export const projectRouter = createTRPCRouter({

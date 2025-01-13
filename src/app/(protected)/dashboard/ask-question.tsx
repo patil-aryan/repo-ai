@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -136,7 +136,7 @@ const AskQuestionCard = () => {
               >
                 {loading ? (
                   <div className="flex items-center gap-2">
-                    <Loader className="h-4 w-4" />{" "}
+                    <Loader className="h-4 w-4 animate-spin" />{" "}
                     {/* Add a spinner for loading state */}
                     Loading...
                   </div>
@@ -149,14 +149,18 @@ const AskQuestionCard = () => {
         </DialogContent>
       </Dialog>
 
-      <div className="col-span-3">
+      <div className="col-span-3 ">
         <Card className="relative">
           <CardHeader>
             <CardTitle>Query your Github Repository</CardTitle>
+            <CardDescription>
+                        RepoAI has the context of your codebase.
+                    </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={onSubmit}>
               <Textarea
+              className="p-4"
                 placeholder="Have a query? Ask RepoAI"
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
