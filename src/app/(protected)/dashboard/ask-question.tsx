@@ -22,6 +22,7 @@ import { Loader } from "lucide-react";
 import CodeReferences from "./code-references";
 import { api } from "@/trpc/react";
 import { toast } from "sonner";
+import useRefetch from "@/hooks/use-refetch";
 
 const AskQuestionCard = () => {
   const { project } = useProject();
@@ -53,6 +54,8 @@ const AskQuestionCard = () => {
 
     setLoading(false);
   };
+
+  const refetch = useRefetch();
 
   return (
     <>
@@ -115,6 +118,7 @@ const AskQuestionCard = () => {
                 },{
                     onSuccess: () => {
                         toast.success('Query saved successfully')
+                        refetch()
                     },
                     onError: () => {
                         toast.error('Failed to save query')
@@ -148,12 +152,12 @@ const AskQuestionCard = () => {
       <div className="col-span-3">
         <Card className="relative">
           <CardHeader>
-            <CardTitle>Talk to your Github Repo</CardTitle>
+            <CardTitle>Query your Github Repository</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={onSubmit}>
               <Textarea
-                placeholder="In which file is the function 'getAllEmbeddings()' defined?"
+                placeholder="Have a query? Ask RepoAI"
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
               />

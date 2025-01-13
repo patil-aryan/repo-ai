@@ -39,7 +39,7 @@ const items = [
   },
 
   {
-    title: "Query your repo",
+    title: "Queries",
     url: "/query",
     icon: Bot,
   },

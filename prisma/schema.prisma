@@ -22,7 +22,7 @@ model User {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
     userToProjects UserToProject[]
-    questionsAsked      Question[]
+    questions      Question[]
 }
 
 model Project {
@@ -37,7 +37,7 @@ model Project {
     userToProjects UserToProject[]
     sourceCodeEmbeddings SourceCodeEmbedding[]
 
-    savedQuestions Question[]
+    questions Question[]
 
 }
 
