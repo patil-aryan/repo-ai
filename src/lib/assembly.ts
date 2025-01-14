@@ -42,7 +42,7 @@ export const processMeeting = async (meetingUrl: string) => {
 
 
 // const FILE = 'https://storage.googleapis.com/aai-docs-samples/sports_injuries.mp3'
-const FILE = 'https://yrtrjimiagtejiwxyqya.supabase.co/storage/v1/object/public/repoAI/repoAI/%20Electric%20Love.mp3'
+// const FILE = 'https://yrtrjimiagtejiwxyqya.supabase.co/storage/v1/object/public/repoAI/repoAI/%20Electric%20Love.mp3'
 
-const response = await processMeeting(FILE);
-console.log(response)
+// const response = await processMeeting(FILE);
+// console.log(response)
