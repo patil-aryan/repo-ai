@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import useRefetch from "@/hooks/use-refetch";
+import { Loader } from "lucide-react";
 
 const MeetingsPage = () => {
   const { projectId } = useProject();
@@ -55,6 +56,7 @@ const MeetingsPage = () => {
                 </div>
                 {meeting.status === "PROCESSING" && (
                         <Badge className="text-white mx-4 px-3 py-2">
+                            <Loader className="animate-spin mr-2"></Loader>
                             Processing
 
                         </Badge>
