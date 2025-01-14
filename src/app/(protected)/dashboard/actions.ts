@@ -97,7 +97,7 @@ export async function generate(input: string, projectId: string) {
         summary,
         1 - ("summaryEmbedding" <=> ${vectorQuery}::vector) as similarity
       FROM "SourceCodeEmbedding"
-      WHERE 1 - ("summaryEmbedding" <=> ${vectorQuery}::vector) > .5
+      WHERE 1 - ("summaryEmbedding" <=> ${vectorQuery}::vector) > .3
       AND "projectId" = ${projectId}
       ORDER BY  similarity DESC
       LIMIT 10;
@@ -106,11 +106,15 @@ export async function generate(input: string, projectId: string) {
 
     for (const r of result) {
         context += `source:${r.fileName}\ncode content:${r.sourceCode}\nsummary of file:${r.summary}\n\n`;
+        console.log(context)
+        console.log('Query Results:', result)
     };
+    
 
     (async () => {
         const { textStream } = await streamText({
-            model: google('gemini-1.5-pro'),
+        
+            model: google('gemini-1.5-flash'),
             prompt: `
             You are a ai code assistant who answers questions about the codebase. Your target audience is a technical intern who is looking to understand the codebase.
                     AI assistant is a brand new, powerful, human-like artificial intelligence.
@@ -139,6 +143,7 @@ export async function generate(input: string, projectId: string) {
         }
 
         stream.done();
+        
     })();
 
     return { output: stream.value, filesReferenced: result };
