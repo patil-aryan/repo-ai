@@ -1,10 +1,11 @@
 import { GithubRepoLoader } from '@langchain/community/document_loaders/web/github'
 import { Document } from '@langchain/core/documents'
-import { summariseCode,  generateEmbedding } from './gemini'
-import { generate } from 'node_modules/@langchain/core/dist/utils/fast-json-patch'
+import { getEmbeddings, getSummary } from './gemini'
 import { db } from '@/server/db'
 import { Octokit } from 'octokit'
 import pLimit from 'p-limit'
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 // const getFileCount = async (path: string, ocktokit: Octokit, githubOwner: string, githubRepo: string, acc: number = 0) => {
 
@@ -83,7 +84,7 @@ const getFileCount = async (path: string, octokit: Octokit, githubOwner: string,
 
 export const checkCredits = async (githubUrl: string, githubToken?: string) => {
     const octokit = new Octokit({
-        auth: githubToken || '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',
+        auth: githubToken || process.env.GITHUB_TOKEN,
     });
     const githubOwner = githubUrl.split('/')[3]
     const githubRepo = githubUrl.split('/')[4]
@@ -93,7 +94,7 @@ export const checkCredits = async (githubUrl: string, githubToken?: string) => {
 }
 export const loadGitHubRepo = async (githubUrl: string, githubToken?: string) => {
 
-    const loader = new GithubRepoLoader(githubUrl, {accessToken:githubToken || "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",
+    const loader = new GithubRepoLoader(githubUrl, {accessToken:githubToken || process.env.GITHUB_TOKEN,
         branch: 'main',
         ignoreFiles: ['package-lock.json', 'yarn.lock', 'pnpm-lock-yaml', 'bun.lockb'],
         recursive: true,
@@ -149,7 +150,7 @@ export const loadGithubRepo = async (githubUrl: string, githubToken?: string) =>
             ignoreFiles: ['package-lock.json', 'bun.lockb'],
             recursive: true,
             // recursive: false,
-            accessToken: githubToken || "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",
+            accessToken: githubToken || process.env.GITHUB_TOKEN,
             unknown: "warn",
             maxConcurrency: 5, // Defaults to 2
         }
@@ -202,8 +203,8 @@ export const indexGithubRepo = async (projectId: string, githubUrl: string, gith
 
 export const generateEmbeddings = async (docs: Document[]) => {
     return Promise.all(docs.map(async (doc: any) => {
-        const summary = await summariseCode(doc)
-        const embedding = await generateEmbedding(summary)
+        const summary = await getSummary(doc)
+        const embedding = await getEmbeddings(summary)
         return {
             summary,
             embedding,

@@ -2,6 +2,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import 'dotenv/config';
 import { Document } from '@langchain/core/documents'
 import { toast } from 'sonner';
+import { loadGithubRepo } from './github-loader';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
@@ -11,6 +12,32 @@ const model = genAI.getGenerativeModel(
         model: 'gemini-1.5-flash'
     }
 )
+
+export const getEmbeddings = async (text: string) => {
+    const model = genAI.getGenerativeModel({ model: "text-embedding-004" });
+    const result = await model.embedContent(text);
+    const embedding = result.embedding;
+    return embedding.values as number[];
+}
+
+
+export const getSummary = async (doc: Awaited<ReturnType<typeof loadGithubRepo>>[number]) => {
+    console.log("getting summary for", doc.metadata.source);
+    const code = doc.pageContent.slice(0, 10000); // Limit to 10000 characters
+    const response = await model.generateContent([
+        `You are an intelligent senior software engineer who specialises in onboarding junior software engineers onto projects`,
+        `You are onboarding a junior software engineer and explaining to them the purpose of the ${doc.metadata.source} file
+Here is the code:
+---
+${code}
+---
+            Give a summary no more than 100 words of the code above`,
+    ]);
+
+
+    return response.response.text()
+}
+
 
 export const aiSummarizeCommit = async (diff: string) => {
 
@@ -52,30 +79,30 @@ It is given only as an example of appropriate comments.`,
 
 // console.log( await aiSummarizeCommit(`https://github.com/patil-aryan/fullstack-linkedin/commit/705d9629e07ad5f178e6850160a52d5406e64fa8.diff`))
 
-export async function summariseCode(doc: Document) {
-    console.log("Getting summary for the files", doc.metadata.source)
-    try {
-        const code = doc.pageContent.slice(0,10000)
-    const response = await model.generateContent([
-        `You are an expert and intelligent senior principal software engineer and programmer, 
-        who is an expert in explaining any code to junior software engineers who are onboarding. You are 
-        onboarding a junior software engineer and explaining them the purpose of the ${doc.metadata.source} file.
+// export async function summariseCode(doc: Document) {
+//     console.log("Getting summary for the files", doc.metadata.source)
+//     try {
+//         const code = doc.pageContent.slice(0,10000)
+//     const response = await model.generateContent([
+//         `You are an expert and intelligent senior principal software engineer and programmer, 
+//         who is an expert in explaining any code to junior software engineers who are onboarding. You are 
+//         onboarding a junior software engineer and explaining them the purpose of the ${doc.metadata.source} file.
 
-        Here is the code:
-        ---
-         ${code}
-        ---
+//         Here is the code:
+//         ---
+//          ${code}
+//         ---
         
-    Give a detailed and expert summary of the code in 200 words or less.`    
-    ])
+//     Give a detailed and expert summary of the code in 200 words or less.`    
+//     ])
 
-    return response.response.text();
-    } catch (error) {
-        console.error(error)
-    }
+//     return response.response.text();
+//     } catch (error) {
+//         console.error(error)
+//     }
     
 
-}
+// }
 
 
 // export async function generateEmbedding(summary: string): Promise<number[]> {
@@ -89,30 +116,23 @@ export async function summariseCode(doc: Document) {
 //     const embedding = response.embedding
 //     return embedding
 // }
-export async function generateEmbedding(summary: string): Promise<number[]> {
-    const model = genAI.getGenerativeModel({
-        model: 'text-embedding-004'
-    });
+// export async function generateEmbedding(summary: string): Promise<number[]> {
+//     const model = genAI.getGenerativeModel({
+//         model: 'text-embedding-004'
+//     });
 
-    const response = await model.embedContent([summary]);
+//     const response = await model.embedContent([summary]);
 
-    // Ensure the response contains the embedding
-    if (!response.embedding) {
-        throw new Error('Failed to generate embedding: No embedding found in response');
-    }
+//     // Ensure the response contains the embedding
+//     if (!response.embedding) {
+//         throw new Error('Failed to generate embedding: No embedding found in response');
+//     }
 
-    // Convert the embedding to a number array if necessary
-    const embedding = response.embedding as unknown as number[];
+//     // Convert the embedding to a number array if necessary
+//     const embedding = response.embedding as unknown as number[];
 
-    // Return the embedding array
-    return embedding;
-}
+//     // Return the embedding array
+//     return embedding;
+// }
 
-export const getEmbeddings = async (text: string) => {
-    // For embeddings, use the Text Embeddings model
-    const model = genAI.getGenerativeModel({ model: "text-embedding-004" });
 
-    const result = await model.embedContent(text);
-    const embedding = result.embedding;
-    return embedding.values as number[];
-}
