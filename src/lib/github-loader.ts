@@ -81,27 +81,19 @@ const getFileCount = async (path: string, octokit: Octokit, githubOwner: string,
     return acc
 }
 
-export const checkCredits = async (githubUrl: string, githubToken: string) => {
-
-    const octokit = new Octokit({ auth: githubToken })
+export const checkCredits = async (githubUrl: string, githubToken?: string) => {
+    const octokit = new Octokit({
+        auth: githubToken || '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',
+    });
     const githubOwner = githubUrl.split('/')[3]
     const githubRepo = githubUrl.split('/')[4]
-    if (!githubOwner || !githubRepo) {
-        return 0
-    }
-
+    if (!githubOwner || !githubRepo) return 0
     const fileCount = await getFileCount('', octokit, githubOwner, githubRepo, 0)
-
     return fileCount
-
-
-
-
 }
-
 export const loadGitHubRepo = async (githubUrl: string, githubToken?: string) => {
 
-    const loader = new GithubRepoLoader(githubUrl, {accessToken:githubToken || "",
+    const loader = new GithubRepoLoader(githubUrl, {accessToken:githubToken || "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",
         branch: 'main',
         ignoreFiles: ['package-lock.json', 'yarn.lock', 'pnpm-lock-yaml', 'bun.lockb'],
         recursive: true,
@@ -157,7 +149,7 @@ export const loadGithubRepo = async (githubUrl: string, githubToken?: string) =>
             ignoreFiles: ['package-lock.json', 'bun.lockb'],
             recursive: true,
             // recursive: false,
-            accessToken: githubToken || "",
+            accessToken: githubToken || "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",
             unknown: "warn",
             maxConcurrency: 5, // Defaults to 2
         }

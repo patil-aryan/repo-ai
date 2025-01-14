@@ -27,7 +27,7 @@ const CreatePage = () => {
             createProject.mutate({
                 name: data.projectName,
                 githubUrl: data.repoUrl,
-                githubToken: data.githubToken
+                githubToken: ""    //    githubToken: data.githubToken || ""  
          }, {
               onSuccess: () => {
                   toast.success('Project created successfully')
