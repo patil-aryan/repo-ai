@@ -158,6 +158,37 @@ export const projectRouter = createTRPCRouter({
       }
     });
   }),
+  archiveProject: protectedProcedure.input(z.object({ projectId: z.string() })).mutation(async ({ ctx, input }) => {
+    return await ctx.db.project.update({
+      where: {
+        id: input.projectId,
+      },
+      data: {
+        deletedAt: new Date(),
+      },
+    });
+  }),
+  getTeamMembers: protectedProcedure.input(z.object({ projectId: z.string() })).query(async ({ ctx, input }) => {
+    return await ctx.db.userToProject.findMany({
+      where: {
+        projectId: input.projectId,
+      },
+      include: {
+        user: true,
+      },
+    });
+  }),
+  getMyCredits: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.db.user.findUnique({
+      where: {
+        id: ctx.user.userId!,
+      },
+      select: {
+        credits: true,
+      }
+    });
+  }),
+
 });
 
 // export const projectRouter = createTRPCRouter({

@@ -103,7 +103,7 @@ const AskQuestionCard = () => {
             {/* Container for Markdown and Button */}
             <MDEditor.Markdown
               source={answer}
-              className="prose prose-sm sm:prose-base max-h-[50vh] w-full max-w-[80vw] overflow-auto rounded-lg border border-gray-200 bg-white p-6 shadow-sm"
+              className="prose prose-sm sm:prose-base max-h-[50vh] w-full max-w-[58vw] overflow-auto rounded-lg border border-gray-200 bg-white p-6 shadow-sm"
             />
             <CodeReferences fileReferences={filesReferences} />
             <div className="flex justify-end">
